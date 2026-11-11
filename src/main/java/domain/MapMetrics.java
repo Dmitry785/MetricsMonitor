@@ -16,7 +16,11 @@ public class MapMetrics implements Metrics{
 
 	@Override
 	public <T> T get(String key, Class<T> type) {
-		return type.cast(this.metricsMap.get(key));
+		try {
+			return type.cast(this.metricsMap.get(key));
+		} catch(Exception e){
+			return null;
+		}
 	}
 
 	@Override

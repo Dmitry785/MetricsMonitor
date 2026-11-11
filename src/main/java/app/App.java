@@ -11,5 +11,6 @@ public class App {
 		map.put("key1", 5);
 		MapMetrics metrics = new MapMetrics(map);
 		System.out.println(metrics.get("key1"));
+		System.out.println(metrics.get("key1", String.class));
 	}
 }
