@@ -19,10 +19,10 @@ public class MemoryMonitor implements Monitor {
 		long totalMemory = memory.getTotal();
 		long availableMemory = memory.getAvailable();
 		long usedMemory = totalMemory - availableMemory;
-		Map<String, Object> map = Map.of("memory.used", usedMemory,
+		HashMap<String, Object> map = (HashMap)Map.of("memory.used", usedMemory,
 				"memory.total", totalMemory,
 				"memory.available", availableMemory);
-		Metrics metrics = new MapMetrics(new HashMap<>(map));
+		Metrics metrics = new MapMetrics(map);
 		return metrics;
 	}
 

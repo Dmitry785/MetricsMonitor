@@ -1,9 +1,7 @@
-package application;
+package domain;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import domain.Monitor;
 
 public class MonitorDispatcher{
     private final List<Monitor> monitors = new ArrayList<>();
