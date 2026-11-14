@@ -22,7 +22,7 @@ public class MemoryMonitor implements Monitor {
 		Map<String, Object> map = Map.of("memory.used", usedMemory,
 				"memory.total", totalMemory,
 				"memory.available", availableMemory);
-		Metrics metrics = new MapMetrics(new HashMap<String, Object>(map));
+		Metrics metrics = new MapMetrics(new HashMap<>(map));
 		return metrics;
 	}
 

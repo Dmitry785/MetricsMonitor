@@ -21,7 +21,7 @@ public class CpuMonitor implements Monitor{
 		Util.sleep(1000);
 		double cpuLoad = cpu.getSystemCpuLoadBetweenTicks(oldTicks);
 		Map<String, Object> map = Map.of("cpu.usage", cpuLoad);
-		Metrics metrics = new MapMetrics(new HashMap<String, Object>(map));
+		Metrics metrics = new MapMetrics(new HashMap<>(map));
 		return metrics;
 		
 	}

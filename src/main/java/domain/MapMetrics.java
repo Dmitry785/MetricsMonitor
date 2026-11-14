@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class MapMetrics implements Metrics{
-	private Map<String, Object> metricsMap;
+	private final Map<String, Object> metricsMap;
 	public MapMetrics(HashMap<String, Object> map) {
 		this.metricsMap = map;
 	}
