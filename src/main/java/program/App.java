@@ -11,6 +11,7 @@ public class App {
 		MonitorDispatcher dispatcher = new MonitorDispatcher();
 		dispatcher.register(new CpuMonitor());
 		dispatcher.register(new MemoryMonitor());
+		dispatcher.register(new GpuMonitor());
 		dispatcher.register(new DiskMonitor());
 		MonitorService monitorService = new MonitorService(dispatcher);
 		MonitorPrinter printer = new MonitorPrinter(monitorService);

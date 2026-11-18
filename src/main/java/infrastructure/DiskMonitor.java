@@ -28,19 +28,10 @@ public class DiskMonitor implements Monitor{
                 continue;
             long total = fileStore.getTotalSpace();
             long free = fileStore.getFreeSpace();
-            long usable = fileStore.getUsableSpace();
-			if(total/1024 >= 1)
-            	map.put(fileStore.getName()+".total", Math.round(total/Math.pow(1024, 3)*100)/100.0 + "Gb");
-			else
-            	map.put(fileStore.getName()+".total", Math.round(total/Math.pow(1024, 2)*100)/100.0 + "Mb");
-			if(free/1024 >= 1)
-            	map.put(fileStore.getName()+".free", Math.round(free/Math.pow(1024, 3)*100)/100.0 + "Gb");
-			else
-            	map.put(fileStore.getName()+".free", Math.round(free/Math.pow(1024, 2)*100)/100.0 + "Mb");
-			if(usable/1024 >= 1)
-            	map.put(fileStore.getName()+".usable", Math.round(usable/Math.pow(1024, 3)*100)/100.0 + "Gb");
-			else
-            	map.put(fileStore.getName()+".usable", Math.round(usable/Math.pow(1024, 2)*100)/100.0 + "Mb");
+			long usable = fileStore.getUsableSpace();
+			map.put("disk."+fileStore.getName()+".total", BytesConverter.SmartConvert(total));
+			map.put("disk."+fileStore.getName()+".free", BytesConverter.SmartConvert(free));
+			map.put("disk."+fileStore.getName()+".usable", BytesConverter.SmartConvert(usable));
         }
 
 		Metrics metrics = new MapMetrics(map);

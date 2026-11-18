@@ -18,13 +18,13 @@ public class MemoryMonitor implements Monitor {
 	public Metrics collect() {
 		SystemInfo systemInfo = new SystemInfo();
 		GlobalMemory memory = systemInfo.getHardware().getMemory();
-		double totalMemory = memory.getTotal();
-		double availableMemory = memory.getAvailable();
-		double usedMemory = totalMemory - availableMemory;
+		long totalMemory = memory.getTotal();
+		long availableMemory = memory.getAvailable();
+		long usedMemory = totalMemory - availableMemory;
 		HashMap<String, Object> map = new HashMap<>();
-		map.putAll(Map.of("memory.used", Math.round(usedMemory/Math.pow(1024, 3)*100)/100.0 + "Gb",
-				"memory.total", Math.round(totalMemory/Math.pow(1024, 3)*100)/100.0 + "Gb",
-				"memory.available", Math.round(availableMemory/Math.pow(1024, 3)*100)/100.0 + "Gb"));
+		map.putAll(Map.of("memory.used", BytesConverter.SmartConvert(usedMemory),
+				"memory.total", BytesConverter.SmartConvert(totalMemory),
+				"memory.available", BytesConverter.SmartConvert(availableMemory)));
 		Metrics metrics = new MapMetrics(map);
 		return metrics;
 	}
