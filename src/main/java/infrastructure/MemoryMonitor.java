@@ -1,10 +1,12 @@
-package domain;
+package infrastructure;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import oshi.SystemInfo;
 import oshi.hardware.GlobalMemory;
+
+import domain.Monitor;
 
 public class MemoryMonitor implements Monitor {
 	@Override

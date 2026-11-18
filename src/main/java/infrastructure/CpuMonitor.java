@@ -1,4 +1,4 @@
-package domain;
+package infrastructure;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -6,6 +6,8 @@ import java.util.Map;
 import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
 import oshi.util.Util;
+
+import domain.Monitor;
 
 public class CpuMonitor implements Monitor{
 	@Override

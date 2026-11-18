@@ -1,4 +1,4 @@
-package domain;
+package infrastructure;
 
 import java.util.HashMap;
 import java.util.List;
@@ -6,6 +6,8 @@ import java.util.List;
 import oshi.SystemInfo;
 import oshi.software.os.FileSystem;
 import oshi.software.os.OSFileStore;
+
+import domain.Monitor;
 
 public class DiskMonitor implements Monitor{
 	@Override
