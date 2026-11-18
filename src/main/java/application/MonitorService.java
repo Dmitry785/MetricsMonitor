@@ -1,17 +1,12 @@
 package application;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-
-import domain.MapMetrics;
-import domain.Metrics;
-import domain.MonitorDispatcher;
 
 public class MonitorService{
     private final MonitorDispatcher dispatcher;
@@ -20,21 +15,26 @@ public class MonitorService{
         this.dispatcher = dispatcher;
     }
 
-    public Metrics collectAll(){
+    public List<MonitorResult> collectAll(){
         if(dispatcher.getMonitors().isEmpty())
             return null;
         ExecutorService executor = Executors.newFixedThreadPool(dispatcher.getMonitors().size());
         try {
-            List<Future<Metrics>> futures = dispatcher.getMonitors()
+            List<Future<MonitorResult>> futures = dispatcher.getMonitors()
                 .stream()
-                .map(m->executor.submit(m::collect))
+                .map(m->executor.submit(()->{
+                    try {
+                        return MonitorResult.success(m.collect(), m.getName());
+                    } catch (Exception e) {
+                        return MonitorResult.failure(e, m.getName());
+                    }
+                }))
                 .toList();
-            Map<String, Object> allValues = new HashMap<>();
-            for(Future<Metrics> future : futures){
-                Metrics metrics = future.get();
-                allValues.putAll(metrics.getValues());
+            List<MonitorResult> results = new ArrayList<>();
+            for(Future<MonitorResult> future : futures){
+                results.add(future.get());
             }
-            return new MapMetrics(new HashMap<>(allValues));
+            return results;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new RuntimeException("Сбор данных прерван", e);
@@ -44,26 +44,40 @@ public class MonitorService{
             executor.shutdown();
         }
     }
-    public Metrics collectAll_CompletbleFuture(){
+    public List<MonitorResult> collectAll_CompletbleFuture(){
         if(dispatcher.getMonitors().isEmpty())
             return null;
         ExecutorService executor = Executors.newFixedThreadPool(dispatcher.getMonitors().size());
         try {
-            List<CompletableFuture<Metrics>> futures = dispatcher.getMonitors()
+            List<CompletableFuture<MonitorResult>> futures = dispatcher.getMonitors()
                 .stream()
-                .map(m->CompletableFuture.supplyAsync(m::collect, executor))
+                .map(m->CompletableFuture.supplyAsync(m::collect, executor)
+                    .handle((metrics, error)->{
+                        if(error == null)
+                            return MonitorResult.success(metrics, m.getName());
+                        return MonitorResult.failure(error, m.getName());
+                    }))
                 .toList();
             CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
-            HashMap<String, Object> allValues = new HashMap<>();
-            for(CompletableFuture<Metrics> future : futures){
-                allValues.putAll(future.join().getValues());
-            }
-            return new MapMetrics(allValues);
+
+            return futures.stream().map(f->f.join()).toList();
         } catch(Exception e){
             throw new RuntimeException("Сбор данных прерван", e);
         } finally{
             executor.shutdown();
         }
     }
-    //public void printReport(Metrics metrics);
+    public void printReport(List<MonitorResult> results){
+        System.out.println(" >>> Report");
+        if(results != null)
+            for(MonitorResult result : results){
+                System.out.println("\n [" + result.getMonitorName() + "]");
+                if(result.isSuccess())
+                    for(String key: result.getMetrics().keys())
+                        System.out.println(" > " + key + ":\t" + result.getMetrics().get(key));
+                else
+                    System.out.println(" ! Error occured while collecting metrics: "+ result.getError().getMessage());
+            }
+        System.out.println(" <<<");
+    }
 }

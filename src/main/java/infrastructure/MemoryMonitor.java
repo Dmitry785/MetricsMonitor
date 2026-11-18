@@ -6,7 +6,7 @@ import java.util.Map;
 import oshi.SystemInfo;
 import oshi.hardware.GlobalMemory;
 
-import domain.Monitor;
+import domain.*;
 
 public class MemoryMonitor implements Monitor {
 	@Override
@@ -18,12 +18,13 @@ public class MemoryMonitor implements Monitor {
 	public Metrics collect() {
 		SystemInfo systemInfo = new SystemInfo();
 		GlobalMemory memory = systemInfo.getHardware().getMemory();
-		long totalMemory = memory.getTotal();
-		long availableMemory = memory.getAvailable();
-		long usedMemory = totalMemory - availableMemory;
-		HashMap<String, Object> map = (HashMap)Map.of("memory.used", usedMemory,
-				"memory.total", totalMemory,
-				"memory.available", availableMemory);
+		double totalMemory = memory.getTotal();
+		double availableMemory = memory.getAvailable();
+		double usedMemory = totalMemory - availableMemory;
+		HashMap<String, Object> map = new HashMap<>();
+		map.putAll(Map.of("memory.used", Math.round(usedMemory/Math.pow(1024, 3)*100)/100.0 + "Gb",
+				"memory.total", Math.round(totalMemory/Math.pow(1024, 3)*100)/100.0 + "Gb",
+				"memory.available", Math.round(availableMemory/Math.pow(1024, 3)*100)/100.0 + "Gb"));
 		Metrics metrics = new MapMetrics(map);
 		return metrics;
 	}

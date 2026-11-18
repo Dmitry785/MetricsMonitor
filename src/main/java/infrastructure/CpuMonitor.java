@@ -7,7 +7,7 @@ import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
 import oshi.util.Util;
 
-import domain.Monitor;
+import domain.*;
 
 public class CpuMonitor implements Monitor{
 	@Override
@@ -22,7 +22,8 @@ public class CpuMonitor implements Monitor{
 		long[] oldTicks = cpu.getSystemCpuLoadTicks();
 		Util.sleep(1000);
 		double cpuLoad = cpu.getSystemCpuLoadBetweenTicks(oldTicks);
-		HashMap<String, Object> map = (HashMap)Map.of("cpu.usage", cpuLoad);
+		HashMap<String, Object> map = new HashMap<>();
+		map.put("cpu.usage", Math.round(cpuLoad*10000)/100.0 + "%");
 		Metrics metrics = new MapMetrics(map);
 		return metrics;
 		
