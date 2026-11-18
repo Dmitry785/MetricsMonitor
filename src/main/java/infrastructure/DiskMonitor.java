@@ -41,7 +41,6 @@ public class DiskMonitor implements Monitor{
             	map.put(fileStore.getName()+".usable", Math.round(usable/Math.pow(1024, 3)*100)/100.0 + "Gb");
 			else
             	map.put(fileStore.getName()+".usable", Math.round(usable/Math.pow(1024, 2)*100)/100.0 + "Mb");
-			System.out.println(fileStore.getName() + total);
         }
 
 		Metrics metrics = new MapMetrics(map);
